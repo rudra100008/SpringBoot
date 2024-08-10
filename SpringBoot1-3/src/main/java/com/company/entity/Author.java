@@ -1,10 +1,12 @@
 package com.company.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 @Entity
 @Table(name="Author_Details")
@@ -16,6 +18,9 @@ public class Author {
     private String authorFirstName;
     @Column(name="Last_Name")
     private String authorLastName;
+
+    @OneToOne(mappedBy="author",cascade=CascadeType.ALL)
+    private Book book;
    
     public Author(){
         super();
