@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.company.entity.Book;
 import com.company.services.BookServices;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -94,5 +96,11 @@ public class BookController {
 		}
 		
 	}
+	@GetMapping("/books/search")
+	public ResponseEntity<Book> searchMethod(@RequestParam("title") String title) {
+		Book b=this.bookServices.findBookByName(title);
+		return ResponseEntity.ok(b);
+	}
+	
 	
 }

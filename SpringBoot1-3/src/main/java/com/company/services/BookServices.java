@@ -79,5 +79,9 @@ public class BookServices {
 	 this.bookDao.save(book);
 		
 	}
+	public Book findBookByName(String title){
+		Book b=this.bookDao.findByBookTitle(title);
+		return b;
+	}
 	
 }
