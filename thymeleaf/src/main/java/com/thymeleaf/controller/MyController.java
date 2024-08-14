@@ -45,24 +45,21 @@ public class MyController {
     }
 
     //http://localhost:8080/user
-    @GetMapping(value = "/user")
+    @GetMapping("/user")
     public String getMethodName(Model model) {
-        model.addAttribute("message","");
-        return "user";
-    }
-    
+        model.addAttribute("isActive",false);
+        model.addAttribute("gender", "F");
 
-    //http://localhost:8080/user
-    @RequestMapping(value = "/user", method=RequestMethod.POST)
-    public String userHandler(Model model,@RequestParam(value = "password", required=false) String password) {
-       if("user".equals(password)){
-        model.addAttribute("message", "This is User.");
-       }else if ("admin".equals(password)) {
-        model.addAttribute("message", " This is Admin.");
-       }else{
-        model.addAttribute("message", "Invalid Password.");
-       }
+        List<Integer> number =List.of(1,2,43,21,65,53);
+        model.addAttribute("numberList", number);
         return "user";
+    }   
+    //handler for fragments
+    //http://localhost:8080/services
+    @GetMapping("/services")
+    public String servicehandler() {
+
+        return "services";
     }
     
 }

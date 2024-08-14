@@ -12,7 +12,12 @@
     <p>Upper case:</p>  <p th:text="${ #strings.toUpperCase(name) }"></p>
     <p>length of <span th:text="${name}"></span>: <span th:text="${#strings.length(name)}"></span></p>
     <p>Curent Date and Time: <span th:text="${currentDateTime}"></span></p>
-    <p th></p>
+    <div th:with= "b=10,a=9,n=${name}">
+      <p>Value of a is <span th:text="${a}"></span></p>
+      <p th:text="'Value of b is '+ ${b}"></p>
+      <p  >Sum of a and b is <span th:text="${a+b}"></span> </p>
+      <p>Value of n is <span th:text="${n}"></span></p>
+    </div>
   
 </body>
 </html>

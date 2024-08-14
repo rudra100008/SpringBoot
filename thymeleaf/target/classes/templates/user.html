@@ -6,13 +6,17 @@
     <title>User</title>
 </head>
 <body>
-    <form th:action= "@{/user}" method="post">
-        <input type="password" name="password" placeholder="Enter the password" required>
-        <button type="submit">Submit</button>
-    </form>
-    <p th:text="${message}" style="color: red;"></p>
-    
-    
-      
+   <h1>User is 
+    <span th:style="${isActive} ?'color:blue':'color:red'" th:text="${isActive}?'ACTIVE':'UNACTIVE'"></span>
+  </h1> 
+  <h4 th:if= "${gender=='M'}">Male</h4>
+  <h4 th:unless="${gendeer=='M'}">Female</h4>
+
+  <div th:switch="${numberList.size()}">
+    <h1 th:case="0">List contain zero elements</h1>
+    <h1 th:case="1">List contain 1 elements</h1>
+    <h1 th:case="*">List containe more than 1 elements</h1>
+
+  </div>
 </body>
 </html>

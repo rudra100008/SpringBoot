@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <link rel="stylesheet" th:href= "@{/css/navbar.css}">
+</head>
+<body>
+   
+    <footer th:fragment= "footer1">
+    <nav class="navbar" >
+        <div class="navbar-container">
+            <div class="logo">
+                <h1>Proo<span>duct</span></h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="http://localhost:8080/user">User</a></li>
+                <li><a href="http://localhost:8080/about">About</a></li>
+                <li><a href="http://localhost:8080/list">List</a></li>
+            </ul>
+        </div>
+    </nav>
+    </footer>
+</body>
+</html>
