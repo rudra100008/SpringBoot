@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="error-box">
+            <h1>Error</h1>
+            <p>Oops! Something went wrong.</p>
+            <p th:text="${errorMessage}"></p>
+            <a href="/form" class="btn">Back to Form</a>
+        </div>
+    </div>
+</body>
+</html>

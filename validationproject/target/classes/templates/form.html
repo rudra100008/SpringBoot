@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup Form</title>
+    <link rel="stylesheet" th:href= "@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <div class="button-box">
+                <div id="btn"></div>
+                <button type="button" class="toggle-btn" onclick="login()">Login</button>
+                <button type="button" class="toggle-btn" onclick="signup()">Signup</button>
+            </div>
+            <form id="login" class="input-group" th:action= "@{/login}" method="post" th:object="${User}">
+                <h3>Login </h3>
+                <input 
+                type="email" 
+                class="input-field" 
+                name="email" 
+                th:value="${User.email}" 
+                placeholder="Email Address" required>
+
+                <input 
+                type="password" 
+                class="input-field" 
+                name="password" 
+                th:value="${User.password}" 
+                placeholder="Password" required>
+                <a href="#" class="forgot-password">Forgot password?</a>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <form id="signup" class="input-group" th:action= "@{/signup}" method="post" th:object="${User}">
+                <h3>Sign Up</h3>
+                <input 
+                type="text" 
+                class="input-field" 
+                name="username" 
+                th:value="${User.username}"
+                
+                placeholder="Username" >
+                <p th:each="e : ${#fields.errors('username')}" class="error-message" th:text="${e}"></p>
+
+                <input 
+                type="email" 
+                class="input-field" 
+                name="email" 
+                th:value="${User.email}" 
+                placeholder="Email Address" >
+                <p th:each=" e: ${#fields.errors('email')}"class="error-message" th:text="${e}" ></p>
+
+                <input 
+                type="password" 
+                class="input-field" 
+                name="password" 
+                th:value="${User.password}" 
+                placeholder="Password" >
+                <p th:each="e : ${#fields.errors('password')}"class="error-message" th:text="${e}"></p>
+
+                <div class="checkbox-container">
+                    <input type="checkbox" id="agreed" name="agreed">
+                    <label for="agreed">Agree term and condition</label>
+                    <p th:each="e : ${#fields.errors('agreed')}"class="error-message" th:text="${e}"></p>
+                </div>
+               
+                <button type="submit" class="submit-btn">Signup</button>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/script.js}"> </script>
+</body>
+</html>
