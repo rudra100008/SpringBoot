@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="https://www.thymeleaf.com">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        input[type=text],
+        input[type=number],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>Add Product</h1>
+        <form id="productForm" th:action="@{/api/product}" method="post" onsubmit="submitForm(event)">
+            <label for="name">Product Name:</label>
+            <input type="text" name="name" id="name" th:field="*{name}" placeholder="Enter product name" required>
+
+            <label for="price">Product Price:</label>
+            <input type="number" name="price" id="price" th:field="*{price}" placeholder="Enter product price" required>
+
+            <label for="category">Product Category:</label>
+            <select name="category" id="category" th:field="*{category}" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="electronic device">Electronic Device</option>
+                <option value="food">Food</option>
+                <option value="Utensils">Utensils</option>
+            </select>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <script>
+        function submitForm(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const form = document.getElementById('productForm');
+            const formData = new FormData(form);
+
+            const product = {
+                name: formData.get('name'),
+                price: parseFloat(formData.get('price')),
+                category: formData.get('category')
+            };
+
+            fetch('/api/product', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(product)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // Optionally, handle success (e.g., show a success message or clear the form)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Optionally, handle errors
+            });
+        }
+    </script>
+</body>
+
+</html>
