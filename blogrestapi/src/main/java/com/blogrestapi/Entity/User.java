@@ -11,6 +11,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -18,13 +21,18 @@ import lombok.Data;
 @Table
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(nullable = false)
+    @NotEmpty(message = "Required")
     private String username;
     @Column(nullable = false)
+    @NotEmpty(message = "Required")
+    @Email(message = "Invalid email format")
     private String email;
     @Column(nullable = false)
+    @NotEmpty(message = "Required")
+    @Size(min=3,max=16,message = "Password should be minimum 3 and maximum 16 letters")
     private String password;
     private boolean isEnable;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.LAZY)

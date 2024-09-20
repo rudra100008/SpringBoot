@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.blogrestapi.DTO.UserDTO;
 import com.blogrestapi.Dao.UserDao;
 import com.blogrestapi.Entity.User;
+import com.blogrestapi.Exception.UserNotFoundException;
 import com.blogrestapi.Service.UserService;
 
 @Service
@@ -39,8 +40,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUserById(int id, UserDTO userDTO) {
-       User user=this.userDao.findById(id).orElseThrow(()->new RuntimeException("User not found")); 
-       modelMapper.map(userDTO, user);
+       User user=this.userDao.findById(id).orElseThrow(()->new UserNotFoundException("User not found with id: "+id)); 
+       user.setUsername(userDTO.getUsername());
+       user.setEmail(userDTO.getEmail());
+       user.setPassword(userDTO.getPassword());
+       user.setEnable(true);
       User updateduser= this.userDao.save(user);
       return modelMapper.map(updateduser, UserDTO.class);
 
@@ -48,6 +52,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(int id) {
+        if (!this.userDao.existsById(id)) {
+            throw new UserNotFoundException("User not found by id: "+id);
+        }
        this.userDao.deleteById(id);
     }
    
