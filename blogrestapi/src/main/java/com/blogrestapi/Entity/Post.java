@@ -8,10 +8,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table
 public class Post {
     @Id
@@ -23,13 +27,5 @@ public class Post {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user")
     private User user;
-    public Post() {
-    }
-    public Post(int postId, String postTitle, String content, String image, User user) {
-        this.postId = postId;
-        this.postTitle = postTitle;
-        this.content = content;
-        this.image = image;
-        this.user = user;
-    }
+   
 }

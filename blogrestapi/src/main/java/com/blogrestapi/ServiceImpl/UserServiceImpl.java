@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.blogrestapi.DTO.UserDTO;
 import com.blogrestapi.Dao.UserDao;
 import com.blogrestapi.Entity.User;
+import com.blogrestapi.Exception.AlreadyExistsException;
 import com.blogrestapi.Exception.UserNotFoundException;
 import com.blogrestapi.Service.UserService;
 
@@ -33,6 +34,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
+        if (this.userDao.existsByUsername(userDTO.getUsername())) {
+            throw new AlreadyExistsException("username is already used");
+        }
+        if (this.userDao.existsByEmail(userDTO.getEmail())) {
+            throw new AlreadyExistsException("email is already used");
+        }
         User user=modelMapper.map(userDTO, User.class);
         User savedUser=this.userDao.save(user);
         return modelMapper.map(savedUser,UserDTO.class);
