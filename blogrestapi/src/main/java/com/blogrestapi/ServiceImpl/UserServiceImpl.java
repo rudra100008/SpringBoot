@@ -29,7 +29,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(int id) {
-        return this.userDao.findById(id).map(user->modelMapper.map(user,UserDTO.class)).orElse(null);
+        return this.userDao.findById(id).map(user->modelMapper.map(user,UserDTO.class))
+        .orElseThrow(()->new UserNotFoundException("User not found with id: "+id));
     }
 
     @Override
@@ -47,7 +48,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUserById(int id, UserDTO userDTO) {
-       User user=this.userDao.findById(id).orElseThrow(()->new UserNotFoundException("User not found with id: "+id)); 
+        User user=this.userDao.findById(id).orElseThrow(()->new UserNotFoundException("User not found with id: "+id)); 
+        if (!user.getUsername().equals(userDTO.getUsername()) && this.userDao.existsByUsername(userDTO.getUsername())  ) {
+            throw new AlreadyExistsException("Username is already used");
+        }
+        if ( !user.getEmail().equals(userDTO.getEmail()) &&  this.userDao.existsByEmail(userDTO.getEmail())) {
+            throw new AlreadyExistsException("Email is already used");
+        }
        user.setUsername(userDTO.getUsername());
        user.setEmail(userDTO.getEmail());
        user.setPassword(userDTO.getPassword());

@@ -17,8 +17,8 @@ public class UserDTO {
     @NotEmpty(message = "Required")
     private String username;
 
-     @NotEmpty(message = "Required")
-    @Email(message = "Email should be valid")
+    @NotEmpty(message = "Required")
+    @Email(message = "Invalid email format")
     private String email;
 
     @NotEmpty(message = "Required")
