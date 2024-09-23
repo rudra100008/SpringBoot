@@ -11,7 +11,7 @@ import com.blogrestapi.DTO.UserDTO;
 import com.blogrestapi.Dao.UserDao;
 import com.blogrestapi.Entity.User;
 import com.blogrestapi.Exception.AlreadyExistsException;
-import com.blogrestapi.Exception.UserNotFoundException;
+import com.blogrestapi.Exception.ResourceNotFoundException;
 import com.blogrestapi.Service.UserService;
 
 @Service
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUserById(int id) {
         return this.userDao.findById(id).map(user->modelMapper.map(user,UserDTO.class))
-        .orElseThrow(()->new UserNotFoundException("User not found with id: "+id));
+        .orElseThrow(()->new ResourceNotFoundException("User not found with id: "+id));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUserById(int id, UserDTO userDTO) {
-        User user=this.userDao.findById(id).orElseThrow(()->new UserNotFoundException("User not found with id: "+id)); 
+        User user=this.userDao.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: "+id)); 
         if (!user.getUsername().equals(userDTO.getUsername()) && this.userDao.existsByUsername(userDTO.getUsername())  ) {
             throw new AlreadyExistsException("Username is already used");
         }
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(int id) {
         if (!this.userDao.existsById(id)) {
-            throw new UserNotFoundException("User not found by id: "+id);
+            throw new ResourceNotFoundException("User not found by id: "+id);
         }
        this.userDao.deleteById(id);
     }

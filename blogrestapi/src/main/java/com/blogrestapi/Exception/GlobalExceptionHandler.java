@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
         response.put("message","Something went wrong: "+ e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handlerUserNotFound(UserNotFoundException ex)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handlerUserNotFound(ResourceNotFoundException ex)
     {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "NOT_FOUND(404)");
