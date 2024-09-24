@@ -1,7 +1,9 @@
 package com.blogrestapi.Entity;
 
+import java.util.Date;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,13 +21,20 @@ import lombok.NoArgsConstructor;
 @Table
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int postId;
+    @Column(nullable=false)
     private String postTitle;
+    @Column(length = 10000,nullable = false)
     private String content;
     private String image;
-    @ManyToOne(fetch = FetchType.EAGER)
+    private Date postDate;
+    @ManyToOne
     @JoinColumn(name = "user")
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "category")
+    private Category category;
+
    
 }

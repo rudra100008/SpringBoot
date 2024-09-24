@@ -36,18 +36,23 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryDTO getCategoryBYId(int id) {
        return this.categoryDao.findById(id).map(category->modelMapper.map(category, CategoryDTO.class))
-       .orElseThrow(()->new ResourceNotFoundException("Category with this "+id+ " not found "));
+       .orElseThrow(()->new ResourceNotFoundException("Category not found with id: "+id));
     }
 
+    //delete a category by id
     @Override
     public void deleteCategory(int id) {
+      if (!this.categoryDao.existsById(id)) {
+         throw new ResourceNotFoundException("Category not found with id: "+id);
+      }
        this.categoryDao.deleteById(id);
     }
 
+    //update the category with the id
     @Override
     public CategoryDTO updateCategory(int id, CategoryDTO categoryDTO) {
         Category category=this.categoryDao.findById(id)
-        .orElseThrow(()->new ResourceNotFoundException("Category  with this "+id+ " not found"));
+        .orElseThrow(()->new ResourceNotFoundException("Category not found with id: "+id));
         category.setCategoryTitle(categoryDTO.getCategoryTitle());
        Category updatedCategory= this.categoryDao.save(category);
        return modelMapper.map(updatedCategory,CategoryDTO.class);
