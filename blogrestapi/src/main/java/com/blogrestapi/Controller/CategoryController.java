@@ -42,7 +42,7 @@ public class CategoryController {
          return ResponseEntity.status(HttpStatus.CONFLICT).body(response);   
         }
        CategoryDTO savedCategory= this.categoryService.createCategory(categoryDTO);
-       return ResponseEntity.status(HttpStatus.OK).body(savedCategory);
+       return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
     //Get all category
     @GetMapping("/category")
@@ -81,7 +81,7 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(@PathVariable("id") int id)
     {
         this.categoryService.deleteCategory(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

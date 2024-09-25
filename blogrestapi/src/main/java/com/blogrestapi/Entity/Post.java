@@ -30,10 +30,10 @@ public class Post {
     private String image;
     private Date postDate;
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user",nullable = false)
     private User user;
     @ManyToOne
-    @JoinColumn(name = "category")
+    @JoinColumn(name = "category", nullable=false)
     private Category category;
 
    
