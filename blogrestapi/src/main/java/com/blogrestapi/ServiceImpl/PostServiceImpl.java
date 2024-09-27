@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.blogrestapi.DTO.PostDTO;
 import com.blogrestapi.Dao.CategoryDao;
@@ -29,20 +32,24 @@ public class PostServiceImpl implements PostService {
     private CategoryDao categoryDao;
 
     @Override
-    public List<PostDTO> getAllPost() {
-        return this.postDao.findAll().stream().map(post -> modelMapper.map(post, PostDTO.class))
+    public List<PostDTO> getAllPost(int pageNumber,int pageSize) {
+        // the value of pageNumber start form 0 in the database
+        Pageable pageable=PageRequest.of(pageNumber,pageSize);
+        Page<Post> page=this.postDao.findAll(pageable);
+        List<Post> allPost=page.getContent();
+        return allPost.stream().map(post -> modelMapper.map(post, PostDTO.class))
                 .toList();
     }
 
     @Override
-    public PostDTO getPostById(int id) {
+    public PostDTO getPostById(String id) {
         return this.postDao.findById(id)
                 .map(post -> modelMapper.map(post, PostDTO.class))
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with  id: " + id));
     }
 
     @Override
-    public PostDTO createPost(PostDTO postDTO, int userId, int categoryId) {
+    public PostDTO createPost(PostDTO postDTO, String userId, String categoryId) {
         User user = this.userDao.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found by userId: " + userId));
         Category category = this.categoryDao.findById(categoryId)
@@ -58,7 +65,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO updatePostById(int id, PostDTO postDTO, int userId, int categoryId) {
+    public PostDTO updatePostById(String id, PostDTO postDTO, String userId, String categoryId) {
         Post post = this.postDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
         User user = this.userDao.findById(userId)
@@ -77,7 +84,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePostById(int id) {
+    public void deletePostById(String id) {
         if (!this.postDao.existsById(id)) {
             throw new ResourceNotFoundException("Post not found with id: " + id);
         }
@@ -90,7 +97,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO updatePostField(int id, PostDTO postDTO, int userId, int categoryId) {
+    public PostDTO updatePostField(String id, PostDTO postDTO, String userId, String categoryId) {
         Post post = this.postDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
         User user = this.userDao.findById(userId)
@@ -109,27 +116,33 @@ public class PostServiceImpl implements PostService {
         {
             post.setImage("default.jpg");
         }  
+        if (postDTO.getCategoryId() != null && !postDTO.getCategoryId().equals(category.getCategoryId())) {
+            Category newCategory = this.categoryDao.findById(postDTO.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with categoryId: " + postDTO.getCategoryId()));
+            post.setCategory(newCategory);
+        } else {
+            post.setCategory(category);
+        }
         post.setPostDate(new Date());
          post.setUser(user);
-         post.setCategory(category);
         Post updatePost = this.postDao.save(post);
         return modelMapper.map(updatePost, PostDTO.class);
     }
 
     @Override
-    public List<PostDTO> getPostByUserId(int userId) {
+    public List<PostDTO> getPostByUserId(String userId) {
         User user =this.userDao.findById(userId)
         .orElseThrow(()->new ResourceNotFoundException("User not found by this id: "+userId));
         return this.postDao.findPostByUser(user).stream().map(post->modelMapper.map(post, PostDTO.class)).toList();
     }
 
     @Override
-    public List<PostDTO> getPostByCategoryId(int categoryId) {
+    public List<PostDTO> getPostByCategoryId(String categoryId) {
         Category category=this.categoryDao.findById(categoryId)
         .orElseThrow(()->new ResourceNotFoundException("Category not found by this id: "+categoryId));
        return this.postDao.findPostByCategory(category).stream().map(post->modelMapper.map(post, PostDTO.class)).toList();
     }
-    public Integer  numberOfPostPerUser(int userid)
+    public Integer  numberOfPostPerUser(String userid)
     {
         User user =this.userDao.findById(userid)
         .orElseThrow(()->new ResourceNotFoundException("User not found by this id: "+userid));
@@ -137,7 +150,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Integer numberOfPostPerCategory(int categoryId) {
+    public Integer numberOfPostPerCategory(String categoryId) {
        Category category=this.categoryDao.findById(categoryId)
        .orElseThrow(()->new ResourceNotFoundException("Category not found by this id: "+categoryId));
        return this.postDao.countByCategory(category);

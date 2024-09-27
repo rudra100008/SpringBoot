@@ -2,38 +2,31 @@ package com.blogrestapi.Entity;
 
 import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
+@Document(collection = "posts")
 public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int postId;
-    @Column(nullable=false)
+    @MongoId
+    private String postId;
+    
     private String postTitle;
-    @Column(length = 10000,nullable = false)
+    
     private String content;
     private String image;
     private Date postDate;
-    @ManyToOne
-    @JoinColumn(name = "user",nullable = false)
+    @DBRef
     private User user;
-    @ManyToOne
-    @JoinColumn(name = "category", nullable=false)
+    @DBRef
     private Category category;
 
    

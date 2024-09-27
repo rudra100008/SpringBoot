@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
@@ -36,14 +34,6 @@ public class GlobalExceptionHandler {
         response.put("status", "BAD_REQUEST(400)");
         response.put("message", al.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e)
-    {
-        Map<String,Object> response=new HashMap<>();
-        response.put("status","NOT_FOUND(404)");
-        response.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex) {

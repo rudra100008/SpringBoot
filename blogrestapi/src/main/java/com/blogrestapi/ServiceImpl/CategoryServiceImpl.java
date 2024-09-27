@@ -34,14 +34,14 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryDTO getCategoryBYId(int id) {
+    public CategoryDTO getCategoryBYId(String id) {
        return this.categoryDao.findById(id).map(category->modelMapper.map(category, CategoryDTO.class))
        .orElseThrow(()->new ResourceNotFoundException("Category not found with id: "+id));
     }
 
     //delete a category by id
     @Override
-    public void deleteCategory(int id) {
+    public void deleteCategory(String id) {
       if (!this.categoryDao.existsById(id)) {
          throw new ResourceNotFoundException("Category not found with id: "+id);
       }
@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     //update the category with the id
     @Override
-    public CategoryDTO updateCategory(int id, CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(String id, CategoryDTO categoryDTO) {
         Category category=this.categoryDao.findById(id)
         .orElseThrow(()->new ResourceNotFoundException("Category not found with id: "+id));
         category.setCategoryTitle(categoryDTO.getCategoryTitle());

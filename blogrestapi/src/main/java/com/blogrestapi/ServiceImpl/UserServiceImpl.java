@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(int id) {
+    public UserDTO getUserById(String id) {
         return this.userDao.findById(id).map(user->modelMapper.map(user,UserDTO.class))
         .orElseThrow(()->new ResourceNotFoundException("User not found with id: "+id));
     }
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserById(int id, UserDTO userDTO) {
+    public UserDTO updateUserById(String id, UserDTO userDTO) {
         User user=this.userDao.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: "+id)); 
         if (!user.getUsername().equals(userDTO.getUsername()) && this.userDao.existsByUsername(userDTO.getUsername())  ) {
             throw new AlreadyExistsException("Username is already used");
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(int id) {
+    public void deleteUserById(String id) {
         if (!this.userDao.existsById(id)) {
             throw new ResourceNotFoundException("User not found by id: "+id);
         }
