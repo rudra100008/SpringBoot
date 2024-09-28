@@ -53,14 +53,14 @@ public class CategoryController {
     }
     //Get Category from the ID
     @GetMapping("/category/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable("id") String id)
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") int id)
     {
         CategoryDTO categoryDTO=this.categoryService.getCategoryBYId(id);
         return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
     }
     //update category by id
     @PutMapping("/category/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable("id") String id,@Valid @RequestBody CategoryDTO categoryDTO
+    public ResponseEntity<?> updateCategory(@PathVariable("id") int id,@Valid @RequestBody CategoryDTO categoryDTO
     ,BindingResult result)
     {
         Map<String,Object> response=new HashMap<>();
@@ -78,7 +78,7 @@ public class CategoryController {
     }
     //delete category by id
     @DeleteMapping("/category/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable("id") String id)
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") int id)
     {
         this.categoryService.deleteCategory(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

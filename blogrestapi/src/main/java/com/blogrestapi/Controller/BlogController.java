@@ -40,7 +40,7 @@ public class BlogController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getUserById(@PathVariable("id") int id) {
         UserDTO getUserById = this.userService.getUserById(id);
         return ResponseEntity.ok(getUserById);
     }
@@ -69,7 +69,7 @@ public class BlogController {
     
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteUserById(@PathVariable("id") int id) {
         Map<String, Object> response = new HashMap<>();
         UserDTO getUserById = this.userService.getUserById(id);
         this.userService.deleteUserById(id);
@@ -80,7 +80,7 @@ public class BlogController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<?> putUserById(@PathVariable("id") String id,@Valid @RequestBody UserDTO user,BindingResult result) {
+    public ResponseEntity<?> putUserById(@PathVariable("id") int id,@Valid @RequestBody UserDTO user,BindingResult result) {
         Map<String,Object> response=new HashMap<>();
         if (result.hasErrors()) {
             Map<String,Object> fieldError=new HashMap<>();

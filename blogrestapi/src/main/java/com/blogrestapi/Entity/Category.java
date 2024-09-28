@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Category {
 
     @MongoId
-    private String categoryId;
+    private int categoryId;
     private String categoryTitle;
     @DBRef
     private List<Post> post=new ArrayList<>();

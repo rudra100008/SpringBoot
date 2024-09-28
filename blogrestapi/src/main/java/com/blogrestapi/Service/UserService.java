@@ -11,8 +11,8 @@ import com.blogrestapi.DTO.UserDTO;
 @Service
 public interface UserService {
     List<UserDTO> getUsers(); 
-    UserDTO getUserById(String id);
+    UserDTO getUserById(int id);
     UserDTO createUser(UserDTO userDTO); 
-    UserDTO updateUserById(String id, UserDTO userDTO);
-    void deleteUserById(String id);
+    UserDTO updateUserById(int id, UserDTO userDTO);
+    void deleteUserById(int id);
 }

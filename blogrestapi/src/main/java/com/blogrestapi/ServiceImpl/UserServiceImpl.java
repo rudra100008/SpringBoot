@@ -20,6 +20,8 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private SequenceGeneratorService sequence;
     @Override
     public List<UserDTO> getUsers() {
         return this.userDao.findAll().stream()
@@ -28,13 +30,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(String id) {
+    public UserDTO getUserById(int id) {
         return this.userDao.findById(id).map(user->modelMapper.map(user,UserDTO.class))
         .orElseThrow(()->new ResourceNotFoundException("User not found with id: "+id));
     }
 
     @Override
     public UserDTO createUser(UserDTO userDTO) {
+        userDTO.setId((int) this.sequence.generateSequence("user_sequence"));
         if (this.userDao.existsByUsername(userDTO.getUsername())) {
             throw new AlreadyExistsException("username is already used");
         }
@@ -47,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUserById(String id, UserDTO userDTO) {
+    public UserDTO updateUserById(int id, UserDTO userDTO) {
         User user=this.userDao.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: "+id)); 
         if (!user.getUsername().equals(userDTO.getUsername()) && this.userDao.existsByUsername(userDTO.getUsername())  ) {
             throw new AlreadyExistsException("Username is already used");
@@ -65,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(String id) {
+    public void deleteUserById(int id) {
         if (!this.userDao.existsById(id)) {
             throw new ResourceNotFoundException("User not found by id: "+id);
         }

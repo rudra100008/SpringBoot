@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
-    private String id;
+    private Integer id;
 
     @NotEmpty(message = "Required")
     private String username;

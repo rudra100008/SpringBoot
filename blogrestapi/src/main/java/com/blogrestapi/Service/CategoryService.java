@@ -15,11 +15,11 @@ public interface CategoryService {
     List<CategoryDTO> getAllCategory();
 
     //get Category by id
-    CategoryDTO getCategoryBYId(String id);
+    CategoryDTO getCategoryBYId(int id);
 
     //delete category
-    void deleteCategory(String id);
+    void deleteCategory(int id);
 
     //update Category
-    CategoryDTO updateCategory(String id,CategoryDTO category);
+    CategoryDTO updateCategory(int id,CategoryDTO category);
 }

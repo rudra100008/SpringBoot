@@ -17,16 +17,15 @@ import lombok.NoArgsConstructor;
 @Document(collection = "posts")
 public class Post {
     @MongoId
-    private String postId;
+    private int postId;
     
     private String postTitle;
-    
     private String content;
     private String image;
     private Date postDate;
-    @DBRef
+    @DBRef(lazy =true)
     private User user;
-    @DBRef
+    @DBRef(lazy = true)
     private Category category;
 
    

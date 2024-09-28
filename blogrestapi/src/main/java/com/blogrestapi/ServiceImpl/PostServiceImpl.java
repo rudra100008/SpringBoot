@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import com.blogrestapi.DTO.PageResponse;
 import com.blogrestapi.DTO.PostDTO;
 import com.blogrestapi.Dao.CategoryDao;
 import com.blogrestapi.Dao.PostDao;
@@ -30,26 +33,45 @@ public class PostServiceImpl implements PostService {
     private UserDao userDao;
     @Autowired
     private CategoryDao categoryDao;
+    @Autowired
+    private SequenceGeneratorService sequence;
 
     @Override
-    public List<PostDTO> getAllPost(int pageNumber,int pageSize) {
+    public PageResponse<PostDTO> getAllPost(int pageNumber,int pageSize,String sortBy,String sortDir) {
+        Sort sort=sortDir.equalsIgnoreCase("ascending")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+       
         // the value of pageNumber start form 0 in the database
-        Pageable pageable=PageRequest.of(pageNumber,pageSize);
+        Pageable pageable=PageRequest.of(pageNumber,pageSize,sort);
         Page<Post> page=this.postDao.findAll(pageable);
         List<Post> allPost=page.getContent();
-        return allPost.stream().map(post -> modelMapper.map(post, PostDTO.class))
-                .toList();
+        List<PostDTO> getAllPost= allPost.stream().map(post -> modelMapper.map(post, PostDTO.class)).toList();
+        long totalElement=page.getTotalElements();
+        int totalPage=page.getTotalPages();
+        boolean lastPage=page.isLast();
+        PageResponse<PostDTO> pageResponse=new PageResponse<>(
+            "OK(200)",
+            getAllPost,
+            pageSize,
+            pageNumber,
+            totalPage,
+            totalElement,
+            lastPage
+        );
+        return pageResponse;
     }
 
     @Override
-    public PostDTO getPostById(String id) {
+    public PostDTO getPostById(int id) {
         return this.postDao.findById(id)
                 .map(post -> modelMapper.map(post, PostDTO.class))
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with  id: " + id));
     }
 
     @Override
-    public PostDTO createPost(PostDTO postDTO, String userId, String categoryId) {
+    public PostDTO createPost(PostDTO postDTO, int userId, int categoryId) {
+        postDTO.setPostId((int)sequence.generateSequence("post_sequence"));
         User user = this.userDao.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found by userId: " + userId));
         Category category = this.categoryDao.findById(categoryId)
@@ -65,7 +87,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO updatePostById(String id, PostDTO postDTO, String userId, String categoryId) {
+    public PostDTO updatePostById(int id, PostDTO postDTO, int userId, int categoryId) {
         Post post = this.postDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
         User user = this.userDao.findById(userId)
@@ -84,7 +106,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePostById(String id) {
+    public void deletePostById(int id) {
         if (!this.postDao.existsById(id)) {
             throw new ResourceNotFoundException("Post not found with id: " + id);
         }
@@ -92,12 +114,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDTO searchPost(String keyword) {
-        throw new UnsupportedOperationException("Unimplemented method 'seacrhPost'");
+    public List<PostDTO> searchPost(String keyword) {
+        List<Post> listPost =this.postDao.findByPostTitleContainingIgnoreCase(keyword);
+        return listPost.stream().map(p->modelMapper.map(p, PostDTO.class)).toList();
     }
 
     @Override
-    public PostDTO updatePostField(String id, PostDTO postDTO, String userId, String categoryId) {
+    public PostDTO updatePostField(int id, PostDTO postDTO, int userId, int categoryId) {
         Post post = this.postDao.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
         User user = this.userDao.findById(userId)
@@ -116,7 +139,7 @@ public class PostServiceImpl implements PostService {
         {
             post.setImage("default.jpg");
         }  
-        if (postDTO.getCategoryId() != null && !postDTO.getCategoryId().equals(category.getCategoryId())) {
+        if ( postDTO.getCategoryId()!=category.getCategoryId() && postDTO.getCategoryId() !=0) {
             Category newCategory = this.categoryDao.findById(postDTO.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found with categoryId: " + postDTO.getCategoryId()));
             post.setCategory(newCategory);
@@ -130,30 +153,56 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getPostByUserId(String userId) {
+    public PageResponse<PostDTO> getPostByUserId(int userId,int pageNumber,int pageSize,String sortBy,String sortDir) {
+        Sort sort=sortDir.equalsIgnoreCase("ascending")
+        ?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
         User user =this.userDao.findById(userId)
         .orElseThrow(()->new ResourceNotFoundException("User not found by this id: "+userId));
-        return this.postDao.findPostByUser(user).stream().map(post->modelMapper.map(post, PostDTO.class)).toList();
+        Pageable pageable=PageRequest.of(pageNumber, pageSize,sort);
+        Page<Post> page=this.postDao.findPostByUser(user,pageable);
+        List<PostDTO> allPost=page.getContent().stream().map(
+            e->modelMapper.map(e, PostDTO.class)
+        ).toList();
+        long totalElement=page.getTotalElements();
+        int totalPage=page.getTotalPages();
+        boolean lastPage=page.isLast();
+        PageResponse<PostDTO> pageResponse=new PageResponse<>(
+            "OK(200)",
+            allPost,
+            pageSize,
+            pageNumber,
+            totalPage,
+            totalElement,
+            lastPage
+        );
+        return pageResponse;
     }
 
     @Override
-    public List<PostDTO> getPostByCategoryId(String categoryId) {
+    public PageResponse<PostDTO> getPostByCategoryId(int categoryId,int pageNumber,int pageSize,String sortBy,String sortDir) {
+        Sort sort=sortDir.equalsIgnoreCase("ascending")
+        ?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+        //to get the cateogry with providec categoryID
         Category category=this.categoryDao.findById(categoryId)
         .orElseThrow(()->new ResourceNotFoundException("Category not found by this id: "+categoryId));
-       return this.postDao.findPostByCategory(category).stream().map(post->modelMapper.map(post, PostDTO.class)).toList();
-    }
-    public Integer  numberOfPostPerUser(String userid)
-    {
-        User user =this.userDao.findById(userid)
-        .orElseThrow(()->new ResourceNotFoundException("User not found by this id: "+userid));
-        return this.postDao.countByUser(user);
-    }
 
-    @Override
-    public Integer numberOfPostPerCategory(String categoryId) {
-       Category category=this.categoryDao.findById(categoryId)
-       .orElseThrow(()->new ResourceNotFoundException("Category not found by this id: "+categoryId));
-       return this.postDao.countByCategory(category);
-    }
+        Pageable pageable=PageRequest.of(pageNumber, pageSize,sort);
+        Page<Post> pagePost=this.postDao.findPostByCategory(category,pageable);
+        List<PostDTO> allPost=pagePost.getContent().stream()
+        .map(post->modelMapper.map(pagePost, PostDTO.class)).toList();
 
+        long totalElement=pagePost.getTotalElements();
+        int totalPage=pagePost.getTotalPages();
+        boolean lastPage=pagePost.isLast();
+        PageResponse<PostDTO> pageResponse=new PageResponse<>(
+            "Ok(200)",
+            allPost,
+            pageSize,
+            pageNumber,
+            totalPage,
+            totalElement,
+            lastPage
+        );
+       return pageResponse;
+    }
 }

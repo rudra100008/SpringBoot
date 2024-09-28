@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDTO {
-    private String categoryId;
+    private int categoryId;
     @NotEmpty(message = "title should not be empty")
     @Size(min = 2,message = "title should have more than 2 letters")
     private String categoryTitle;

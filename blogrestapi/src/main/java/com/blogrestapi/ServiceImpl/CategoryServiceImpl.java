@@ -19,8 +19,11 @@ public class CategoryServiceImpl implements CategoryService{
     private CategoryDao categoryDao;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private SequenceGeneratorService sequence;
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+       categoryDTO.setCategoryId((int)sequence.generateSequence("category_sequence"));
        Category category=modelMapper.map(categoryDTO,Category.class);
        Category savedCategory=this.categoryDao.save(category);
        return modelMapper.map(savedCategory, CategoryDTO.class);
@@ -34,14 +37,14 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryDTO getCategoryBYId(String id) {
+    public CategoryDTO getCategoryBYId(int id) {
        return this.categoryDao.findById(id).map(category->modelMapper.map(category, CategoryDTO.class))
        .orElseThrow(()->new ResourceNotFoundException("Category not found with id: "+id));
     }
 
     //delete a category by id
     @Override
-    public void deleteCategory(String id) {
+    public void deleteCategory(int id) {
       if (!this.categoryDao.existsById(id)) {
          throw new ResourceNotFoundException("Category not found with id: "+id);
       }
@@ -50,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     //update the category with the id
     @Override
-    public CategoryDTO updateCategory(String id, CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(int id, CategoryDTO categoryDTO) {
         Category category=this.categoryDao.findById(id)
         .orElseThrow(()->new ResourceNotFoundException("Category not found with id: "+id));
         category.setCategoryTitle(categoryDTO.getCategoryTitle());
