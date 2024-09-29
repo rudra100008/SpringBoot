@@ -1,6 +1,8 @@
 package com.blogrestapi.Entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,6 +29,8 @@ public class Post {
     private User user;
     @DBRef(lazy = true)
     private Category category;
+    @DBRef(lazy = true)
+    private Set<Comment> comments=new HashSet<>();
 
    
 }

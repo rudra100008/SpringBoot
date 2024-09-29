@@ -1,12 +1,15 @@
 package com.blogrestapi.Controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +30,7 @@ import com.blogrestapi.DTO.PostDTO;
 import com.blogrestapi.Service.FileService;
 import com.blogrestapi.Service.PostService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -156,7 +160,7 @@ public class PostController {
         List<PostDTO> searchedPost = this.postService.searchPost(search);
         return ResponseEntity.ok(searchedPost);
     }
-    //handler to get the post
+    //handler to save the the image of the a post 
     @PostMapping("/posts/{postId}/uploadImage")
     public ResponseEntity<?> uploadPostImage(
             @RequestParam("image") MultipartFile imageFile,
@@ -181,6 +185,21 @@ public class PostController {
             throw new RuntimeException("File upload failed. Please try again.", e);
         }
     }
+    //handler to get the image form the database
+    @GetMapping(value = "/posts/image/{imageName}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImages(@PathVariable("imageName")String imageName,HttpServletResponse response)
+    {
+       try {
+         InputStream is= this.fileService.getFile(path, imageName);
+         byte[] b=is.readAllBytes();
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_JPEG).body(b);
+       } catch (FileNotFoundException e) {
+        throw new RuntimeException("You have inserted wrong imageName.We could not found image with this name: "+imageName);
+       }catch (IOException e) {
+            throw new RuntimeException("File download  failed. Please try again.", e);
+        }
+    }
+
     
 
 }
