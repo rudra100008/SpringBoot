@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -56,6 +57,13 @@ public class GlobalExceptionHandler {
         response.put("status", "UNAUTHORIZED(401)");
         response.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<?> handleDisabledException(DisabledException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "BAD_REQUEST(400)");
+        response.put("message", "User is disabled");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 }

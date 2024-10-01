@@ -1,28 +1,31 @@
 package com.blogrestapi.Security;
 
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JWTTokenHelper {
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000; // 5 hours in milliseconds
-    private final String secret = "jwtTokenKey"; // Secret key string
-    private final Key key; // Key object
+    @Value("${jwt.token.validity}")
+    public static long JWT_TOKEN_VALIDITY; // 5 hours in milliseconds
 
-    public JWTTokenHelper() {
-        // Create a key from the secret string using HS512 algorithm
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    private SecretKey secretKey; // Secret key instance
+
+    @PostConstruct
+    public void init() {
+        // Generate a secure key for HS512
+        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
 
     // Retrieve username from JWT token
@@ -35,18 +38,19 @@ public class JWTTokenHelper {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    // The interface Function<Claims, T> takes object of the claims and return type T
-    //<T> tells the function is generic type and T means it return type is T
+    // Retrieve any information from the token using the secret
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
     // For retrieving any information from the token, we need the secret key
-    //here secrect key used to compare with the token and check the where token is correct or
     private Claims getAllClaimsFromToken(String token) {
-        JwtParser parser = Jwts.parserBuilder().setSigningKey(key).build(); // Use parserBuilder
-        return parser.parseClaimsJws(token).getBody(); // Use the built parser to parse claims
+        // Use the generated secret key to parse the token
+        return Jwts.parser()
+                .setSigningKey(secretKey) // Use the SecretKey instance directly
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     // Check if the token has expired
@@ -71,7 +75,7 @@ public class JWTTokenHelper {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-                .signWith(key, SignatureAlgorithm.HS512) // Use the new signWith method with Key object
+                .signWith(secretKey) // Use the SecretKey instance directly
                 .compact();
     }
 
