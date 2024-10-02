@@ -3,6 +3,7 @@ package com.blogrestapi.Security;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,10 @@ public class JwtAuthencticationFilter extends OncePerRequestFilter {
     private JWTTokenHelper jwtTokenHelper;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(
+        @NonNull HttpServletRequest request, 
+        @NonNull HttpServletResponse response, 
+        @NonNull FilterChain filterChain)
             throws ServletException, IOException {
       // 1. Get the token from the request header
        final String authorizationHeader=request.getHeader("Authorization");
@@ -48,7 +52,9 @@ public class JwtAuthencticationFilter extends OncePerRequestFilter {
            }
           
        }else{
+        filterChain.doFilter(request, response);
         System.out.println("jwt token is null or doesnot starts with bearer");
+        return;
        }
        //here securityContextHolder holds the securityContext it means it hold the details about the user 
        //that is interacting with the application

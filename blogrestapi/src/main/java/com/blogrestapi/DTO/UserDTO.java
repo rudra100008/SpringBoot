@@ -1,9 +1,12 @@
 package com.blogrestapi.DTO;
 
 
+
+
+import com.blogrestapi.Entity.Role;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,9 +24,10 @@ public class UserDTO {
     @Email(message = "Invalid email format")
     private String email;
 
-    @NotEmpty(message = "Required")
-    @Size(min = 3, max = 16, message = "Password should be between 3 and 16 characters")
-    private String password;
 
+    // @JsonIgnore // password will not appear in the json field
+    @NotEmpty(message = "Required")
+    private String password;
     private boolean isEnable;
+    private Role role;
 }

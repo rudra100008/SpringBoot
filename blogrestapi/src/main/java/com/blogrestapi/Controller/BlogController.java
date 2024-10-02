@@ -1,12 +1,15 @@
 package com.blogrestapi.Controller;
 
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,6 +53,10 @@ public class BlogController {
     public ResponseEntity<?> postUser(@Valid @RequestBody UserDTO user, BindingResult result) {
         Map<String, Object> response = new HashMap<>();
         user.setEnable(true);
+        String rawPassword=user.getPassword();
+        if (rawPassword.length()<3 && rawPassword.length()>16) {
+            result.rejectValue("password", "error.user","Password should be less than 3 and greater than 16");
+        }
         if (result.hasErrors()) {
             Map<String,Object> errorMessage=new HashMap<>();
             result.getFieldErrors().forEach(error->{
@@ -59,15 +66,13 @@ public class BlogController {
             response.put("message",errorMessage);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        
         UserDTO saveUser = this.userService.createUser(user);
         response.put("message", "User inserted successfully");
         response.put("status", "CREATED(201)");
         response.put("data", saveUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable("id") int id) {
         Map<String, Object> response = new HashMap<>();

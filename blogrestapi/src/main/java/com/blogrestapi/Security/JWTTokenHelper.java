@@ -1,15 +1,14 @@
 package com.blogrestapi.Security;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,14 +17,13 @@ import org.springframework.stereotype.Component;
 public class JWTTokenHelper {
 
     @Value("${jwt.token.validity}")
-    public static long JWT_TOKEN_VALIDITY; // 5 hours in milliseconds
-
-    private SecretKey secretKey; // Secret key instance
-
-    @PostConstruct
-    public void init() {
-        // Generate a secure key for HS512
-        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    public  long JWT_TOKEN_VALIDITY; // 5 hours in milliseconds
+    @Value("${jwt.token.secret}")
+    public String secret;
+    private Key getKey()
+    {
+        byte[] byteKey=Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(byteKey);
     }
 
     // Retrieve username from JWT token
@@ -48,7 +46,7 @@ public class JWTTokenHelper {
     private Claims getAllClaimsFromToken(String token) {
         // Use the generated secret key to parse the token
         return Jwts.parser()
-                .setSigningKey(secretKey) // Use the SecretKey instance directly
+                .setSigningKey(getKey()) // Use the SecretKey instance directly
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -75,7 +73,7 @@ public class JWTTokenHelper {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-                .signWith(secretKey) // Use the SecretKey instance directly
+                .signWith(getKey()) // Use the SecretKey instance directly
                 .compact();
     }
 

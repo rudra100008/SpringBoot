@@ -1,14 +1,18 @@
 package com.blogrestapi.ServiceImpl;
 
+
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.blogrestapi.DTO.UserDTO;
 import com.blogrestapi.Dao.UserDao;
+import com.blogrestapi.Entity.Role;
 import com.blogrestapi.Entity.User;
 import com.blogrestapi.Exception.AlreadyExistsException;
 import com.blogrestapi.Exception.ResourceNotFoundException;
@@ -22,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapper;
     @Autowired
     private SequenceGeneratorService sequence;
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     @Override
     public List<UserDTO> getUsers() {
         return this.userDao.findAll().stream()
@@ -44,6 +49,12 @@ public class UserServiceImpl implements UserService {
         if (this.userDao.existsByEmail(userDTO.getEmail())) {
             throw new AlreadyExistsException("email is already used");
         }
+        if ( userDTO.getRole()==null ) {
+            Role role=new Role(2,"ROLE_USER");
+            userDTO.setRole(role);
+        }
+      
+        userDTO.setPassword(encoder.encode(userDTO.getPassword())); 
         User user=modelMapper.map(userDTO, User.class);
         User savedUser=this.userDao.save(user);
         return modelMapper.map(savedUser,UserDTO.class);
@@ -58,9 +69,14 @@ public class UserServiceImpl implements UserService {
         if ( !user.getEmail().equals(userDTO.getEmail()) &&  this.userDao.existsByEmail(userDTO.getEmail())) {
             throw new AlreadyExistsException("Email is already used");
         }
+        if ( user.getRole()==null ) {
+            Role role=new Role(2,"ROLE_USER");
+            user.setRole(role);
+        }
        user.setUsername(userDTO.getUsername());
        user.setEmail(userDTO.getEmail());
-       user.setPassword(userDTO.getPassword());
+      
+       user.setPassword(encoder.encode(userDTO.getPassword())); 
        user.setEnable(true);
       User updateduser= this.userDao.save(user);
       return modelMapper.map(updateduser, UserDTO.class);

@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 //when user tries to access the protected resource then this send the respone to user as "Access Denied"
+// if user is not loggedIn
 @Component
 public class JWTAuthencticationEntryPoint implements AuthenticationEntryPoint {
 
