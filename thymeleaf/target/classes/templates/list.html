@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3 th:if= "${nameList.size==0}">No Elements in list</h3>
+    <h3 th:unless= "${nameList.size==0}">List of Name: </h3>
+    <ul>
+        <li th:each=" name,n: ${nameList}">
+            <span th:style= "${n.odd}?'font-weight:bold;color:blue':''" th:text="${n.count}+' '+${name}"></span>
+        </li>
+    </ul>
+    <h1>Another way of printing list value</h1>
+    <h4 th:each=" name: ${nameList}" th:text="${name}"></h4>
+    
+
+    <!--
+    count
+    index
+    size
+    odd/even
+    first
+    last
+    -->
+</body>
+</html>

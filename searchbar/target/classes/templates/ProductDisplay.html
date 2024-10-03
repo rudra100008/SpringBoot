@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="https://www.thymeleaf.com">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Display</title>
+    <style>
+        .table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table tr:hover {
+            background-color: #ddd;
+        }
+
+        .table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="table">
+        <tr>
+            <th>Product Name</th>
+            <th>Product Price</th>
+            <th>Product Category</th>
+        </tr>
+        <tr th:each=" product: ${products}">
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.category}"></td>
+        </tr>
+    </table>
+</body>
+
+</html>

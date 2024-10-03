@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User</title>
+</head>
+<body>
+   <h1>User is 
+    <span th:style="${isActive} ?'color:blue':'color:red'" th:text="${isActive}?'ACTIVE':'UNACTIVE'"></span>
+  </h1> 
+  <h4 th:if= "${gender=='M'}">Male</h4>
+  <h4 th:unless="${gendeer=='M'}">Female</h4>
+
+  <div th:switch="${numberList.size()}">
+    <h1 th:case="0">List contain zero elements</h1>
+    <h1 th:case="1">List contain 1 elements</h1>
+    <h1 th:case="*">List containe more than 1 elements</h1>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8" />
+    <title>About</title>
+</head>
+<body>
+    <h1>About Page</h1>
+    <h4>We are learning Spring boot</h4>
+    <p>Name: <span th:text="${name}"></span></p>
+    <p>Date: <span th:text="${date}"></span></p>
+    <p>Upper case:</p>  <p th:text="${ #strings.toUpperCase(name) }"></p>
+    <p>length of <span th:text="${name}"></span>: <span th:text="${#strings.length(name)}"></span></p>
+    <p>Curent Date and Time: <span th:text="${currentDateTime}"></span></p>
+    <div th:with= "b=10,a=9,n=${name}">
+      <p>Value of a is <span th:text="${a}"></span></p>
+      <p th:text="'Value of b is '+ ${b}"></p>
+      <p  >Sum of a and b is <span th:text="${a+b}"></span> </p>
+      <p>Value of n is <span th:text="${n}"></span></p>
+    </div>
+  
+</body>
+</html>
