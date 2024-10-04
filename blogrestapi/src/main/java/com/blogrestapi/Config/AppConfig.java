@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package com.blogrestapi.Config;
 
 import org.modelmapper.ModelMapper;
@@ -20,26 +19,3 @@ public class AppConfig {
     }
 
 }
-=======
-package com.blogrestapi.Config;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-@Configuration
-public class AppConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
-
-}
->>>>>>> 4e1d3c33e347acf859fd8818dbc58cef4c7a60f3
